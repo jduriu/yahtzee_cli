@@ -63,26 +63,52 @@ def welcome():
 def check_dice_format(user_input):
   if user_input:
     dice = user_input.split(", ")
-    for dye in dice:
-      if len(dye) == 2:
-        if dye[0] == "d" and dye[1].isdigit():
-          return dye[1] > 0 and dye[1] < 6
+    for die in dice:
+      if len(die) == 2:
+        if die[0] == "d" and die[1].isdigit():
+          return int(die[1]) > 0 and int(die[1]) < 6
       return False
   return True
 
 
 def start_game():
   scorecard = Scorecard()
-  # while scorecard.scored:
+  return scorecard
+
+
+def play_game(scorecard):
+  while scorecard.scored:
+    score = take_turn()
+
+def take_turn():
   turn = Turn()
-  while turn.rolls < 3:
+  score = None
+  while turn.rolls < 3 or not score:
     rolled_dice = turn.roll_dice()
-    turn.print_dice()
-    user_input = input("write dice names and press enter: ")
-    formatted = check_dice_format(user_input)
-    while not formatted:
-      print("Whoops, it looks like you typed your answer in the wrong format, please make sure you separate each dice name with a comma and a space")
-      user_input = input("please try again: ")
-      formatted = check_dice_format(user_input)
-    else:
-      turn.hold_dice(user_input)
+    re_roll = False
+    while not re_roll:
+      turn.print_dice()
+      operation = input("Enter 'hold' to hold dice, 'release' to release dice, or 'roll' to re-roll dice: ")
+      if operation == 'hold':
+        user_input = input("write dice names to hold and press enter: ")
+        formatted = check_dice_format(user_input)
+        while not formatted:
+          print("Whoops, it looks like you typed your answer in the wrong format, please make sure you separate each dice name with a comma and a space")
+          user_input = input("please try again: ")
+          formatted = check_dice_format(user_input)
+        turn.hold_dice(user_input)
+
+      elif operation == 'release':
+        user_input = input("write dice names to release and press enter: ")
+        formatted = check_dice_format(user_input)
+        while not formatted:
+          print("Whoops, it looks like you typed your answer in the wrong format, please make sure you separate each dice name with a comma and a space")
+          user_input = input("please try again: ")
+          formatted = check_dice_format(user_input)
+          turn.release_dice(user_input)
+
+      elif operation == 'roll':
+        re_roll = True
+
+      else:
+        print("Whoops, it looks like you entered an incorrect operation try again")

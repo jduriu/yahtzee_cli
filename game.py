@@ -1,8 +1,10 @@
-from game_functions import welcome, start_game
+from game_functions import welcome, start_game, play_game
 
 def main():
-  # welcome()
-  start_game()
+  welcome()
+  scorecard = start_game()
+  play_game(scorecard)
+
   # Overall game logic
 
 
