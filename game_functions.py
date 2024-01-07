@@ -1,47 +1,5 @@
-class Turn():
-  def __init__(self):
-    d1 = 0
-    d2 = 0
-    d3 = 0
-    d4 = 0
-    d5 = 0
-    open_dice = [d1, d2, d3, d4, d5]
-    held_dice = []
-    rolls = 0
-
-class Scorecard():
-  def __init__(self):
-    ones = 0
-    twos = 0
-    threes = 0
-    fours = 0
-    fives = 0
-    sixes = 0
-    bonus = 0
-    chance = 0
-    three_of_kind = 0
-    four_of_kind = 0
-    full_house = 0
-    sm_straight = 0
-    lg_straight = 0
-    yahtzee = 0
-    yahtzee_bonus = 0
-    upper_section = [ones, twos, threes, fours, fives, sixes]
-    lower_section = [chance, three_of_kind, four_of_kind, full_house, sm_straight, lg_straight, yahtzee]
-    scored = [ones, twos, threes, fours, fives, sixes, chance, three_of_kind, four_of_kind, full_house, sm_straight, lg_straight, yahtzee]
-
-  def get_upper_section_total(self):
-    subtotal = sum(self.upper_section)
-    if subtotal >= 63 and self.bonus == 0:
-      self.bonus = 35
-    return subtotal + self.bonus
-
-  def get_lower_section_total(self):
-    subtotal = sum(self.lower_section)
-    if self.yahtzee_bonus:
-      return subtotal + (50 * self.yahtzee_bonus)
-    return subtotal
-
+from scorecard import Scorecard
+from turn import Turn
 
 def explain_game():
   explained = False
@@ -89,7 +47,6 @@ def explain_game():
       explained = True
 
 
-
 def welcome():
   print("Welcome to Yahtzee!")
   knows_rules = input("Do you know the rules yes(y) / no(n): ")
@@ -103,6 +60,29 @@ def welcome():
   else:
     explain_game()
 
+def check_dice_format(user_input):
+  if user_input:
+    dice = user_input.split(", ")
+    for dye in dice:
+      if len(dye) == 2:
+        if dye[0] == "d" and dye[1].isdigit():
+          return dye[1] > 0 and dye[1] < 6
+      return False
+  return True
+
+
 def start_game():
   scorecard = Scorecard()
-  while scorecard.scored:
+  # while scorecard.scored:
+  turn = Turn()
+  while turn.rolls < 3:
+    rolled_dice = turn.roll_dice()
+    turn.print_dice()
+    user_input = input("write dice names and press enter: ")
+    formatted = check_dice_format(user_input)
+    while not formatted:
+      print("Whoops, it looks like you typed your answer in the wrong format, please make sure you separate each dice name with a comma and a space")
+      user_input = input("please try again: ")
+      formatted = check_dice_format(user_input)
+    else:
+      turn.hold_dice(user_input)
