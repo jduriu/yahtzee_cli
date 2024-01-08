@@ -30,3 +30,14 @@ class Scorecard():
     if self.yahtzee_bonus:
       return subtotal + (50 * self.yahtzee_bonus)
     return subtotal
+
+  def record_ones(self, dice):
+    total = 0
+    [total + 1 for die in dice.values() if die == 1]
+    self.ones = total
+    self.scored.remove(self.ones)
+
+
+  def print_scorecard(self):
+    print("Current Scorecard:")
+    print(f"Ones: f{self.ones}")

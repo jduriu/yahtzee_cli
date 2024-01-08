@@ -1,4 +1,4 @@
-from game_functions import welcome, start_game, play_game
+from modules.game_functions import welcome, start_game, play_game
 
 def main():
   welcome()
@@ -10,4 +10,8 @@ def main():
 
 
 if __name__ == "__main__":
-  main()
+  try:
+    main()
+  except KeyboardInterrupt:
+    print("\n")
+    print("Game closed, Thanks for playing")

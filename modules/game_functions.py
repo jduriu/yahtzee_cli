@@ -1,5 +1,5 @@
-from scorecard import Scorecard
-from turn import Turn
+from modules.scorecard import Scorecard
+from modules.turn import Turn
 
 def explain_game():
   explained = False
@@ -78,17 +78,19 @@ def start_game():
 
 def play_game(scorecard):
   while scorecard.scored:
-    score = take_turn()
+    dice = take_turn()
+    record_score(dice)
+
 
 def take_turn():
   turn = Turn()
-  score = None
-  while turn.rolls < 3 or not score:
+  while turn.rolls < 3:
     rolled_dice = turn.roll_dice()
     re_roll = False
     while not re_roll:
       turn.print_dice()
-      operation = input("Enter 'hold' to hold dice, 'release' to release dice, or 'roll' to re-roll dice: ")
+      operation = input("Enter 'hold' to hold dice, 'release' to release dice,'roll' to re-roll dice, or 'score' to record a score: ")
+
       if operation == 'hold':
         user_input = input("write dice names to hold and press enter: ")
         formatted = check_dice_format(user_input)
@@ -97,7 +99,6 @@ def take_turn():
           user_input = input("please try again: ")
           formatted = check_dice_format(user_input)
         turn.hold_dice(user_input)
-
       elif operation == 'release':
         user_input = input("write dice names to release and press enter: ")
         formatted = check_dice_format(user_input)
@@ -105,10 +106,17 @@ def take_turn():
           print("Whoops, it looks like you typed your answer in the wrong format, please make sure you separate each dice name with a comma and a space")
           user_input = input("please try again: ")
           formatted = check_dice_format(user_input)
-          turn.release_dice(user_input)
+        turn.release_dice(user_input)
 
       elif operation == 'roll':
         re_roll = True
 
+      elif operation == 'score':
+        return turn.dice
+
       else:
         print("Whoops, it looks like you entered an incorrect operation try again")
+  return turn.dice
+
+def record_score(dice):
+  pass
