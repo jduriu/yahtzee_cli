@@ -31,13 +31,30 @@ class Scorecard():
       return subtotal + (50 * self.yahtzee_bonus)
     return subtotal
 
+  def get_total_score(self):
+    return self.get_lower_section_total() + self.get_upper_section_total()
+
   def record_ones(self, dice):
     total = 0
     [total + 1 for die in dice.values() if die == 1]
     self.ones = total
     self.scored.remove(self.ones)
 
-
   def print_scorecard(self):
     print("Current Scorecard:")
-    print(f"Ones: f{self.ones}")
+    print(f"ones: {self.ones}")
+    print(f"twos: {self.twos}")
+    print(f"threes: {self.threes}")
+    print(f"fours: {self.fours}")
+    print(f"fives: {self.fives}")
+    print(f"sixes: {self.sixes}")
+    print(f"chance: {self.chance}")
+    print(f"three of a kind: {self.three_of_kind}")
+    print(f"four of a kind: {self.four_of_kind}")
+    print(f"small straight: {self.sm_straight}")
+    print(f"large straight: {self.lg_straight}")
+    print(f"full house: {self.full_house}")
+    print(f"yahtzee: {self.yahtzee}")
+    print(f"yahtzee bonus: {self.yahtzee_bonus}")
+    print("\n")
+    print(f"Total Score: {self.get_total_score()}")

@@ -17,6 +17,8 @@ class Turn():
     self.rolls += 1
     for die in self.free_dice:
       self.dice[die] = random.randint(1, 6)
+    print("----------------------------------------------------------------------------")
+    print("\n")
     print(f"You have {3 - self.rolls} roll(s) remaining. Would you like, to hold or release any dice?")
     print("List any dice you would like to hold, using the format 'd#, d#, d#': ")
     return self.dice.items()
@@ -29,12 +31,15 @@ class Turn():
         self.held_dice.append(die)
 
   def print_dice(self):
+    print("\n")
     print("Free dice:")
     for die in self.free_dice:
       print(f"{die}: {self.dice[die]}")
+    print("\n")
     print("Held dice:")
     for die in self.held_dice:
       print(f"{die}: {self.dice[die]}")
+    print("\n")
 
   def release_dice(self, user_input):
     dice_inputs = user_input.split(", ")

@@ -1,7 +1,7 @@
 from modules.game_functions import welcome, start_game, play_game
 
 def main():
-  welcome()
+  # welcome()
   scorecard = start_game()
   play_game(scorecard)
 

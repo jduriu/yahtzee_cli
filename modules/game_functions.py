@@ -46,7 +46,6 @@ def explain_game():
     if repeat == "n" or repeat == "no":
       explained = True
 
-
 def welcome():
   print("Welcome to Yahtzee!")
   knows_rules = input("Do you know the rules yes(y) / no(n): ")
@@ -70,17 +69,14 @@ def check_dice_format(user_input):
       return False
   return True
 
-
 def start_game():
   scorecard = Scorecard()
   return scorecard
 
-
 def play_game(scorecard):
   while scorecard.scored:
     dice = take_turn()
-    record_score(dice)
-
+    record_score(dice, scorecard)
 
 def take_turn():
   turn = Turn()
@@ -118,5 +114,5 @@ def take_turn():
         print("Whoops, it looks like you entered an incorrect operation try again")
   return turn.dice
 
-def record_score(dice):
-  pass
+def record_score(dice, scorecard):
+  scorecard.print_scorecard()
