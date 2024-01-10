@@ -96,17 +96,28 @@ def play_game(scorecard):
 
 def take_turn():
     turn = Turn()
-    while turn.rolls < 3:
+    while True:
+        if turn.rolls == 2:
+            turn.print_all_dice()
+            return turn
         turn.roll_dice()
         re_roll = False
         while not re_roll:
             turn.print_dice()
-            operation = input(
-                "Enter 'hold' to hold dice, 'release' to release dice,'roll' to re-roll dice, or 'score' to record a score: "
-            )
-
-            if operation == "hold":
-                user_input = input("write dice names to hold and press enter: ")
+            print("""
+            Roll Commands:
+            'hold' --> hold dice values
+            'release' --> release dice values
+            'roll' --> re-roll non-held dice
+            'score' --> score with current dice
+            """)
+            roll_operations = {
+                "hold": turn.hold_dice,
+                "release": turn.release_dice,
+            }
+            operation = input("Enter a command: ")
+            if operation in roll_operations:
+                user_input = input(f"write dice names to {operation} and press enter: ")
                 formatted = check_dice_format(user_input)
                 while not formatted:
                     print(
@@ -114,29 +125,15 @@ def take_turn():
                     )
                     user_input = input("please try again: ")
                     formatted = check_dice_format(user_input)
-                turn.hold_dice(user_input)
-            elif operation == "release":
-                user_input = input("write dice names to release and press enter: ")
-                formatted = check_dice_format(user_input)
-                while not formatted:
-                    print(
-                        "Whoops, it looks like you typed your answer in the wrong format, please make sure you separate each dice name with a comma and a space"
-                    )
-                    user_input = input("please try again: ")
-                    formatted = check_dice_format(user_input)
-                turn.release_dice(user_input)
-
+                roll_operations[operation](user_input)
             elif operation == "roll":
                 re_roll = True
-
             elif operation == "score":
                 return turn
-
             else:
                 print(
                     "Whoops, it looks like you entered an incorrect operation try again"
                 )
-    return turn
 
 
 def record_score(turn, scorecard):

@@ -5,7 +5,7 @@ class Scorecard:
     def __init__(self):
         self.categories = {
             "ones": {"value": 0, "name": "Ones", "function": self.score_upper},
-            "twos": {"value": 0, "name": "Twos", "function": self.score_upper },
+            "twos": {"value": 0, "name": "Twos", "function": self.score_upper},
             "threes": {"value": 0, "name": "Threes", "function": self.score_upper},
             "fours": {"value": 0, "name": "Fours", "function": self.score_upper},
             "fives": {"value": 0, "name": "Fives", "function": self.score_upper},
@@ -82,17 +82,14 @@ class Scorecard:
     def get_total_score(self):
         return self.get_lower_section_total() + self.get_upper_section_total()
 
-    def remove_score(self, category):
-        self.not_scored.remove(category)
-
     def score_upper(self, category, dice, num):
-        counts = Counter(dice)
+        counts = Counter(dice.values())
         total = counts[num] * num
-        print(f"{total} will be applied to category: {category}")
+        name = self.categories.get(category)["name"]
+        print(f"{total} will be applied to category: {name}")
         confirm = input("Do you want to confirm? yes(y)/no(n): ")
         if confirm == "y" or confirm == "yes":
-            category_attributes = self.score_categories.get(category)
-            category_attributes["value"] = total
+            self.categories.get(category)["value"] = total
             self.not_scored.remove(category)
 
     # def score_chance(self, dice):
@@ -121,8 +118,7 @@ class Scorecard:
     def enter_score(self, category, dice, num=None):
         if category in self.not_scored:
             if num:
-                self.score_upper(dice, num)
-                self.remove_score(category)
+                self.score_upper(category, dice, num)
             else:
                 pass
                 # category_attributes = self.categories.get(category)
