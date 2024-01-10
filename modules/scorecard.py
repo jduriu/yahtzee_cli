@@ -1,32 +1,42 @@
+from collections import Counter
+
 class Scorecard():
   def __init__(self):
-    self.ones = 0
-    self.twos = 0
-    self.threes = 0
-    self.fours = 0
-    self.fives = 0
-    self.sixes = 0
+    self.categories = {
+      "ones": {"command": "1", "value": 0, "name": "Ones"},
+      "twos": {"command": "2", "value": 0, "name": "Twos"},
+      "threes": {"command": "2", "value": 0, "name": "Threes"},
+      "fours": {"command": "4", "value": 0, "name": "Fours"},
+      "fives": {"command": "5", "value": 0, "name": "Fives"},
+      "sixes": {"command": "6", "value": 0, "name": "Sixes"},
+      "chance": {"command": "ch", "value": 0, "name": "Chance"},
+      "three_of_kind": {"command": "3k", "value": 0, "name": "Three of a kind"},
+      "four_of_kind": {"command": "4k", "value": 0, "name": "Four of a kind"},
+      "full_house": {"command": "fh", "value": 0, "name": "Full house"},
+      "sm_straight": {"command": "sm", "value": 0, "name": "Small straight"},
+      "lg_straight": {"command": "lg", "value": 0, "name": "Large straight"},
+      "yahtzee": {"command": "yz", "value": 0, "name": "Yahtzee"},
+    }
     self.bonus = 0
-    self.chance = 0
-    self.three_of_kind = 0
-    self.four_of_kind = 0
-    self.full_house = 0
-    self.sm_straight = 0
-    self.lg_straight = 0
-    self.yahtzee = 0
     self.yahtzee_bonus = 0
-    self.upper_section = [self.ones, self.twos, self.threes, self.fours, self.fives, self.sixes]
-    self.lower_section = [self.chance, self.three_of_kind, self.four_of_kind, self.full_house, self.sm_straight, self.lg_straight, self.yahtzee]
-    self.scored = [self.ones, self.twos, self.threes, self.fours, self.fives, self.sixes, self.chance, self.three_of_kind, self.four_of_kind, self.full_house, self.sm_straight, self.lg_straight, self.yahtzee]
+    self.upper_section = ["ones", "twos", "threes", "fours", "fives", "sixes"]
+    self.lower_section = ["chance", "three_of_kind", "four_of_kind", "full_house", "sm_straight", "lg_straight", "yahtzee"]
+    self.scored = ["ones", "twos", "threes", "fours", "fives", "sixes", "chance", "three_of_kind", "four_of_kind", "full_house", "sm_straight", "lg_straight", "yahtzee"]
 
   def get_upper_section_total(self):
-    subtotal = sum(self.upper_section)
+    subtotal = 0
+    for score in self.upper_section:
+      category = self.categories.get(score)
+      subtotal += category.get("value")
     if subtotal >= 63 and self.bonus == 0:
       self.bonus = 35
     return subtotal + self.bonus
 
   def get_lower_section_total(self):
-    subtotal = sum(self.lower_section)
+    subtotal = 0
+    for score in self.lower_section:
+      category = self.categories.get(score)
+      subtotal += category.get("value")
     if self.yahtzee_bonus:
       return subtotal + (50 * self.yahtzee_bonus)
     return subtotal
@@ -34,27 +44,42 @@ class Scorecard():
   def get_total_score(self):
     return self.get_lower_section_total() + self.get_upper_section_total()
 
-  def record_ones(self, dice):
-    total = 0
-    [total + 1 for die in dice.values() if die == 1]
-    self.ones = total
-    self.scored.remove(self.ones)
+  def score_num(self, dice, num):
+    scored = False
+    # scores = {
+    #   1: self.ones,
+    #   2: self.twos,
+    #   3: self.threes,
+    #   4: self.fours,
+    #   5: self.fives,
+    #   6: self.sixes,
+    # }
+    while not scored:
+      if scores.num in self.scored:
+        total = 0
+        [total + num for die in dice.values() if die == num]
+        scores.num = total
+        self.scored.remove(scores.num)
+        scored = True
+      else:
+        return
+
+  def score_chance(self, dice):
+    if self.chance in self.scored:
+      self.chance = sum(dice.values())
+      self.scored.remove(self.chance)
+
+
+  def score_three_of_kind(self, dice):
+    if self.three_of_kind in self.scored:
+      counts = Counter(dice.values())
+
 
   def print_scorecard(self):
     print("Current Scorecard:")
-    print(f"ones: {self.ones}")
-    print(f"twos: {self.twos}")
-    print(f"threes: {self.threes}")
-    print(f"fours: {self.fours}")
-    print(f"fives: {self.fives}")
-    print(f"sixes: {self.sixes}")
-    print(f"chance: {self.chance}")
-    print(f"three of a kind: {self.three_of_kind}")
-    print(f"four of a kind: {self.four_of_kind}")
-    print(f"small straight: {self.sm_straight}")
-    print(f"large straight: {self.lg_straight}")
-    print(f"full house: {self.full_house}")
-    print(f"yahtzee: {self.yahtzee}")
-    print(f"yahtzee bonus: {self.yahtzee_bonus}")
+    for category, attributes in self.categories.items():
+      name = attributes.get("name")
+      value = attributes.get("value")
+      print(f"{name}: {value}")
     print("\n")
     print(f"Total Score: {self.get_total_score()}")

@@ -116,3 +116,13 @@ def take_turn():
 
 def record_score(dice, scorecard):
   scorecard.print_scorecard()
+  # for category, di in scorecard.categories.values():
+  #   print(f"")
+  # ready = False
+  # while not ready:
+  #   print("Your dice for this turn are:")
+  #   print(dice.values())
+  #   print("your open categories are:")
+  #   for category in scorecard.scored:
+  #     print(category)
+  #   score_command = input("Which score category would you like to record for this turn?")
