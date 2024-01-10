@@ -144,29 +144,35 @@ def record_score(turn, scorecard):
     score_length = len(scorecard.not_scored)
     commands = {
         "scorecard": scorecard.print_scorecard,
-        "dice": turn.print_dice,
+        "dice": turn.print_all_dice,
         "categories": scorecard.print_score_commands,
     }
-    category_commands = [
-        command.get("command") for command in scorecard.categories.values()
-    ]
+
     while not scored:
         print(
             """
-                Commands:
-                'scorecard' --> view scorecard
-                'dice' --> view current turn dice
-                'categories' --> view a list of score category commands
-                or
-                Enter a category command to record score
+            Commands:
+            'scorecard' --> view scorecard
+            'dice' --> view current turn dice
+            'categories' --> view a list of score category commands
+            or
+            Enter a category command to record score
             """
         )
         user_input = input("Enter command: ")
         if user_input in commands:
             commands[user_input]()
-        elif user_input in category_commands:
-            scorecard.enter_score(user_input)
+        elif user_input in scorecard.category_commands:
+            category = scorecard.category_commands.get(user_input)
+            if user_input.isdigit():
+                scorecard.enter_score(category, turn.dice, int(user_input))
+            else:
+                scorecard.enter_score(category, turn.dice)
             if len(scorecard.not_scored) != score_length:
+                print(f"{category} scored!")
                 scored = True
         else:
-            print("That command isn't available, please try again")
+            print(
+                """That command isn't available or the category was
+                already scored, please try again"""
+            )

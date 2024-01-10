@@ -46,6 +46,12 @@ class Turn:
             print(f"{die}: {self.dice[die]}")
         print("\n")
 
+    def print_all_dice(self):
+        print("\n")
+        for die, value in self.dice.items():
+            print(f"{die}: {value}")
+        print("\n")
+
     def release_dice(self, user_input):
         dice_inputs = user_input.split(", ")
         if dice_inputs:

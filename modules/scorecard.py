@@ -4,19 +4,19 @@ from collections import Counter
 class Scorecard:
     def __init__(self):
         self.categories = {
-            "ones": {"command": "1", "value": 0, "name": "Ones"},
-            "twos": {"command": "2", "value": 0, "name": "Twos"},
-            "threes": {"command": "2", "value": 0, "name": "Threes"},
-            "fours": {"command": "4", "value": 0, "name": "Fours"},
-            "fives": {"command": "5", "value": 0, "name": "Fives"},
-            "sixes": {"command": "6", "value": 0, "name": "Sixes"},
-            "chance": {"command": "ch", "value": 0, "name": "Chance"},
-            "three_of_kind": {"command": "3k", "value": 0, "name": "Three of a kind"},
-            "four_of_kind": {"command": "4k", "value": 0, "name": "Four of a kind"},
-            "full_house": {"command": "fh", "value": 0, "name": "Full house"},
-            "sm_straight": {"command": "sm", "value": 0, "name": "Small straight"},
-            "lg_straight": {"command": "lg", "value": 0, "name": "Large straight"},
-            "yahtzee": {"command": "yz", "value": 0, "name": "Yahtzee"},
+            "ones": {"value": 0, "name": "Ones", "function": self.score_upper},
+            "twos": {"value": 0, "name": "Twos", "function": self.score_upper },
+            "threes": {"value": 0, "name": "Threes", "function": self.score_upper},
+            "fours": {"value": 0, "name": "Fours", "function": self.score_upper},
+            "fives": {"value": 0, "name": "Fives", "function": self.score_upper},
+            "sixes": {"value": 0, "name": "Sixes", "function": self.score_upper},
+            "chance": {"value": 0, "name": "Chance"},
+            "three_of_kind": {"value": 0, "name": "Three of a kind"},
+            "four_of_kind": {"value": 0, "name": "Four of a kind"},
+            "full_house": {"value": 0, "name": "Full house"},
+            "sm_straight": {"value": 0, "name": "Small straight"},
+            "lg_straight": {"value": 0, "name": "Large straight"},
+            "yahtzee": {"value": 0, "name": "Yahtzee"},
         }
         self.bonus = 0
         self.yahtzee_bonus = 0
@@ -45,6 +45,21 @@ class Scorecard:
             "lg_straight",
             "yahtzee",
         ]
+        self.category_commands = {
+            "1": "ones",
+            "2": "twos",
+            "3": "threes",
+            "4": "fours",
+            "5": "fives",
+            "6": "sixes",
+            "ch": "chance",
+            "3k": "three_of_kind",
+            "4k": "four_ok_kind",
+            "fh": "full_house",
+            "sm": "sm_straight",
+            "lg": "lg_straight",
+            "yz": "yahtzee",
+        }
 
     def get_upper_section_total(self):
         subtotal = 0
@@ -67,17 +82,18 @@ class Scorecard:
     def get_total_score(self):
         return self.get_lower_section_total() + self.get_upper_section_total()
 
-    # def score_num(self, dice, num):
-    #     confirmed = False
-    #     while not confirmed:
-    #         if scores.num in self.not_scored:
-    #             total = 0
-    #             [total + num for die in dice.values() if die == num]
-    #             scores.num = total
-    #             self.not_scored.remove(scores.num)
-    #             scored = True
-    #         else:
-    #             return
+    def remove_score(self, category):
+        self.not_scored.remove(category)
+
+    def score_upper(self, category, dice, num):
+        counts = Counter(dice)
+        total = counts[num] * num
+        print(f"{total} will be applied to category: {category}")
+        confirm = input("Do you want to confirm? yes(y)/no(n): ")
+        if confirm == "y" or confirm == "yes":
+            category_attributes = self.score_categories.get(category)
+            category_attributes["value"] = total
+            self.not_scored.remove(category)
 
     # def score_chance(self, dice):
     #     if self.chance in self.not_scored:
@@ -99,11 +115,17 @@ class Scorecard:
 
     def print_score_commands(self):
         print("Category commands:")
-        for category, attributes in self.categories.items():
-            command = attributes.get("command")
-            print(f"{category}: command --> {command}")
+        for command, category in self.category_commands.items():
+            print(f"{category} --> {command}")
 
-    def enter_score(self, user_input):
-        for category, attributes in self.categories.items():
-            if attributes.get("command") == user_input:
-                attributes["function"]()
+    def enter_score(self, category, dice, num=None):
+        if category in self.not_scored:
+            if num:
+                self.score_upper(dice, num)
+                self.remove_score(category)
+            else:
+                pass
+                # category_attributes = self.categories.get(category)
+                # category_attributes.function()
+        else:
+            return
