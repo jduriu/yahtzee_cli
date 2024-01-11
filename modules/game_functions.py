@@ -73,14 +73,15 @@ def welcome():
 
 
 def check_dice_format(user_input):
+    checked = []
     if user_input:
         dice = user_input.split(", ")
         for die in dice:
-            if len(die) == 2:
+            if len(die) == 2 and die not in checked:
                 if die[0] == "d" and die[1].isdigit():
-                    return int(die[1]) > 0 and int(die[1]) < 6
-            return False
-    return True
+                    if int(die[1]) > 0 and int(die[1]) < 6:
+                        checked.append(die)
+        return len(dice) == len(checked)
 
 
 def start_game():
