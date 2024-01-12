@@ -10,13 +10,13 @@ class Scorecard:
             "fours": {"value": 0, "name": "Fours", "function": self.score_upper},
             "fives": {"value": 0, "name": "Fives", "function": self.score_upper},
             "sixes": {"value": 0, "name": "Sixes", "function": self.score_upper},
-            "chance": {"value": 0, "name": "Chance"},
-            "three_of_kind": {"value": 0, "name": "Three of a kind"},
-            "four_of_kind": {"value": 0, "name": "Four of a kind"},
-            "full_house": {"value": 0, "name": "Full house"},
+            "chance": {"value": 0, "name": "Chance", "function": self.score_chance},
+            "three_of_kind": {"value": 0, "name": "Three of a kind", "function": self.score_three_of_kind},
+            "four_of_kind": {"value": 0, "name": "Four of a kind", "function": self.score_four_of_kind},
+            "full_house": {"value": 0, "name": "Full house", "function": self.score_full_house},
             "sm_straight": {"value": 0, "name": "Small straight"},
             "lg_straight": {"value": 0, "name": "Large straight"},
-            "yahtzee": {"value": 0, "name": "Yahtzee"},
+            "yahtzee": {"value": 0, "name": "Yahtzee", "function": self.score_yahtzee},
         }
         self.bonus = 0
         self.yahtzee_bonus = 0
@@ -54,7 +54,7 @@ class Scorecard:
             "6": "sixes",
             "ch": "chance",
             "3k": "three_of_kind",
-            "4k": "four_ok_kind",
+            "4k": "four_of_kind",
             "fh": "full_house",
             "sm": "sm_straight",
             "lg": "lg_straight",
@@ -82,24 +82,58 @@ class Scorecard:
     def get_total_score(self):
         return self.get_lower_section_total() + self.get_upper_section_total()
 
-    def score_upper(self, category, dice, num):
-        counts = Counter(dice.values())
-        total = counts[num] * num
+    def confirm_and_score(self, category, score):
         name = self.categories.get(category)["name"]
-        print(f"{total} will be applied to category: {name}")
-        confirm = input("Do you want to confirm? yes(y)/no(n): ")
+        print(f"{score} will be applied to category: {name}")
+        confirm = input("Do you want to confirm? yes(y)/no(n): ").lower()
         if confirm == "y" or confirm == "yes":
-            self.categories.get(category)["value"] = total
+            self.categories[category]["value"] = score
             self.not_scored.remove(category)
 
-    # def score_chance(self, dice):
-    #     if self.chance in self.not_scored:
-    #         self.chance = sum(dice.values())
-    #         self.not_scored.remove(self.chance)
+    def score_upper(self, category, dice, num):
+        counts = Counter(dice.values())
+        score = counts[num] * num
+        self.confirm_and_score(category, score)
 
-    # def score_three_of_kind(self, dice):
-    #     if self.three_of_kind in self.not_scored:
-    #         counts = Counter(dice.values())
+    def score_chance(self, category, dice):
+        score = 0
+        score = sum(dice.values())
+        self.confirm_and_score(category, score)
+
+    def score_three_of_kind(self, category, dice):
+        nums = set(dice.values())
+        counts = Counter(dice.values())
+        for num in nums:
+            if counts[num] >= 3:
+                score = sum(dice.values())
+                self.confirm_and_score(category, score)
+
+    def score_four_of_kind(self, category, dice):
+        nums = set(dice.values())
+        counts = Counter(dice.values())
+        for num in nums:
+            if counts[num] >= 4:
+                score = sum(dice.values())
+                self.confirm_and_score(category, score)
+
+    def score_full_house(self, category, dice):
+        nums = set(dice.values())
+        counts = Counter(dice.values())
+        three = False
+        two = False
+        for num in nums:
+            if counts[num] == 3:
+                three = True
+            if counts[num] == 2:
+                two = True
+        if three and two:
+            self.confirm_and_score(category, 25)
+
+    def score_yahtzee(self, category, dice):
+        num = set(dice.values())
+        counts = Counter(dice.values())
+        if counts[num] == 5:
+            self.confirm_and_score(category, 50)
 
     def print_scorecard(self):
         print("Current Scorecard:")
@@ -120,8 +154,10 @@ class Scorecard:
             if num:
                 self.score_upper(category, dice, num)
             else:
-                pass
-                # category_attributes = self.categories.get(category)
-                # category_attributes.function()
+                category_attributes = self.categories.get(category)
+                category_attributes["function"](category, dice)
+        elif category == "yahtzee":
+            print("You got a yahtzee bonus!")
+            self.yahtzee_bonus += 1
         else:
             return

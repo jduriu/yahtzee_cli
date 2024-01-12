@@ -91,11 +91,11 @@ def start_game():
 
 def play_game(scorecard):
     while scorecard.not_scored:
-        turn = take_turn()
+        turn = take_turn(scorecard)
         record_score(turn, scorecard)
 
 
-def take_turn():
+def take_turn(scorecard):
     turn = Turn()
     while True:
         if turn.rolls == 2:
@@ -131,6 +131,8 @@ def take_turn():
                 re_roll = True
             elif operation == "score":
                 return turn
+            elif operation == "scorecard":
+                scorecard.print_scorecard()
             else:
                 print(
                     "Whoops, it looks like you entered an incorrect operation try again"
@@ -140,6 +142,7 @@ def take_turn():
 def record_score(turn, scorecard):
     scored = False
     score_length = len(scorecard.not_scored)
+    yahtzee_bonus = scorecard.yahtzee_bonus
     commands = {
         "scorecard": scorecard.print_scorecard,
         "dice": turn.print_all_dice,
@@ -166,7 +169,7 @@ def record_score(turn, scorecard):
                 scorecard.enter_score(category, turn.dice, int(user_input))
             else:
                 scorecard.enter_score(category, turn.dice)
-            if len(scorecard.not_scored) != score_length:
+            if len(scorecard.not_scored) != score_length or scorecard.yahtzee_bonus > yahtzee_bonus:
                 print(f"{category} scored!")
                 scored = True
         else:
