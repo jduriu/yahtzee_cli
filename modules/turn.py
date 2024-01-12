@@ -4,11 +4,11 @@ import random
 class Turn:
     def __init__(self):
         self.dice = {
-            "d1": 2,
-            "d2": 1,
-            "d3": 1,
-            "d4": 1,
-            "d5": 1,
+            "d1": 0,
+            "d2": 0,
+            "d3": 0,
+            "d4": 0,
+            "d5": 0,
         }
         self.free_dice = ["d1", "d2", "d3", "d4", "d5"]
         self.held_dice = []

@@ -101,7 +101,7 @@ def take_turn(scorecard):
         if turn.rolls == 2:
             turn.print_all_dice()
             return turn
-        # turn.roll_dice()
+        turn.roll_dice()
         re_roll = False
         while not re_roll:
             turn.print_dice()
