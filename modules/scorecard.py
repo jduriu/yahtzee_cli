@@ -152,7 +152,8 @@ class Scorecard:
             self.confirm_and_score(category, 30)
 
     def score_yahtzee(self, category, dice):
-        num = set(dice.values())
+        nums = list(dice.values())
+        num = nums[0]
         counts = Counter(dice.values())
         if counts[num] == 5:
             self.confirm_and_score(category, 50)
