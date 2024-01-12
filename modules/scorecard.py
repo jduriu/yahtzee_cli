@@ -14,8 +14,8 @@ class Scorecard:
             "three_of_kind": {"value": 0, "name": "Three of a kind", "function": self.score_three_of_kind},
             "four_of_kind": {"value": 0, "name": "Four of a kind", "function": self.score_four_of_kind},
             "full_house": {"value": 0, "name": "Full house", "function": self.score_full_house},
-            "sm_straight": {"value": 0, "name": "Small straight"},
-            "lg_straight": {"value": 0, "name": "Large straight"},
+            "sm_straight": {"value": 0, "name": "Small straight", "function": self.score_straight},
+            "lg_straight": {"value": 0, "name": "Large straight", "function": self.score_straight},
             "yahtzee": {"value": 0, "name": "Yahtzee", "function": self.score_yahtzee},
         }
         self.bonus = 0
@@ -129,6 +129,28 @@ class Scorecard:
         if three and two:
             self.confirm_and_score(category, 25)
 
+    def score_straight(self, category, dice):
+        nums = sorted(dice.values())
+        l, r = 0, 1
+        count = 1
+        straight_length = 1
+        while r < len(nums):
+            if nums[r] == nums[l] + count:
+                r += 1
+                count += 1
+            else:
+                if count > straight_length:
+                    straight_length = count
+                l = r
+                r += 1
+                count = 1
+        if count > straight_length:
+            straight_length = count
+        if straight_length == 5 and category == "lg_straight":
+            self.confirm_and_score(category, 40)
+        elif straight_length >= 4 and category == "sm_straight":
+            self.confirm_and_score(category, 30)
+
     def score_yahtzee(self, category, dice):
         num = set(dice.values())
         counts = Counter(dice.values())
@@ -159,5 +181,3 @@ class Scorecard:
         elif category == "yahtzee":
             print("You got a yahtzee bonus!")
             self.yahtzee_bonus += 1
-        else:
-            return

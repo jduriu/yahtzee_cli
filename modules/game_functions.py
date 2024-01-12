@@ -107,10 +107,10 @@ def take_turn(scorecard):
             turn.print_dice()
             print("""
             Roll Commands:
-            'hold' --> hold dice values
-            'release' --> release dice values
-            'roll' --> re-roll non-held dice
-            'score' --> score with current dice
+                'hold' --> hold dice values
+                'release' --> release dice values
+                'roll' --> re-roll non-held dice
+                'score' --> score with current dice
             """)
             roll_operations = {
                 "hold": turn.hold_dice,
@@ -153,11 +153,11 @@ def record_score(turn, scorecard):
         print(
             """
             Commands:
-            'scorecard' --> view scorecard
-            'dice' --> view current turn dice
-            'categories' --> view a list of score category commands
-            or
-            Enter a category command to record score
+                'scorecard' --> view scorecard
+                'dice' --> view current turn dice
+                'categories' --> view a list of score category commands
+                or
+                Enter a category command to record score
             """
         )
         user_input = input("Enter command: ")
