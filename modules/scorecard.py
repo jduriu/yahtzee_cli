@@ -3,24 +3,26 @@ from collections import Counter
 
 class Scorecard:
     def __init__(self):
+        self.turn_number = 1
+        self.ready_commands = ["yes", "y"]
         self.categories = {
             "ones": {"value": 0, "name": "Ones", "function": self.score_upper},
             "twos": {"value": 0, "name": "Twos", "function": self.score_upper},
-            "threes": {"value": 0, "name": "Threes", "function": self.score_upper},
-            "fours": {"value": 0, "name": "Fours", "function": self.score_upper},
-            "fives": {"value": 0, "name": "Fives", "function": self.score_upper},
-            "sixes": {"value": 0, "name": "Sixes", "function": self.score_upper},
-            "chance": {"value": 0, "name": "Chance", "function": self.score_chance},
-            "three_of_kind": {"value": 0, "name": "Three of a kind", "function": self.score_three_of_kind},
-            "four_of_kind": {"value": 0, "name": "Four of a kind", "function": self.score_four_of_kind},
-            "full_house": {"value": 0, "name": "Full house", "function": self.score_full_house},
-            "sm_straight": {"value": 0, "name": "Small straight", "function": self.score_straight},
-            "lg_straight": {"value": 0, "name": "Large straight", "function": self.score_straight},
-            "yahtzee": {"value": 0, "name": "Yahtzee", "function": self.score_yahtzee},
+            "threes": {"value": 0, "name": "Threes", "function": self.score_upper},  # noqa
+            "fours": {"value": 0, "name": "Fours", "function": self.score_upper},  # noqa
+            "fives": {"value": 0, "name": "Fives", "function": self.score_upper},  # noqa
+            "sixes": {"value": 0, "name": "Sixes", "function": self.score_upper},  # noqa
+            "chance": {"value": 0, "name": "Chance", "function": self.score_chance},  # noqa
+            "three_of_kind": {"value": 0, "name": "Three of a kind", "function": self.score_three_of_kind},  # noqa
+            "four_of_kind": {"value": 0, "name": "Four of a kind", "function": self.score_four_of_kind},  # noqa
+            "full_house": {"value": 0, "name": "Full house", "function": self.score_full_house},  # noqa
+            "sm_straight": {"value": 0, "name": "Small straight", "function": self.score_straight},  # noqa
+            "lg_straight": {"value": 0, "name": "Large straight", "function": self.score_straight},  # noqa
+            "yahtzee": {"value": 0, "name": "Yahtzee", "function": self.score_yahtzee},  # noqa
         }
         self.bonus = 0
         self.yahtzee_bonus = 0
-        self.upper_section = ["ones", "twos", "threes", "fours", "fives", "sixes"]
+        self.upper_section = ["ones", "twos", "threes", "fours", "fives", "sixes"]  # noqa
         self.lower_section = [
             "chance",
             "three_of_kind",
@@ -86,9 +88,10 @@ class Scorecard:
         name = self.categories.get(category)["name"]
         print(f"{score} will be applied to category: {name}")
         confirm = input("Do you want to confirm? yes(y)/no(n): ").lower()
-        if confirm == "y" or confirm == "yes":
+        if confirm in self.ready_commands:
             self.categories[category]["value"] = score
             self.not_scored.remove(category)
+            self.turn_number += 1
 
     def score_upper(self, category, dice, num):
         counts = Counter(dice.values())
@@ -131,18 +134,18 @@ class Scorecard:
 
     def score_straight(self, category, dice):
         nums = sorted(dice.values())
-        l, r = 0, 1
+        left, right = 0, 1
         count = 1
         straight_length = 1
-        while r < len(nums):
-            if nums[r] == nums[l] + count:
-                r += 1
+        while right < len(nums):
+            if nums[right] == nums[left] + count:
+                right += 1
                 count += 1
             else:
                 if count > straight_length:
                     straight_length = count
-                l = r
-                r += 1
+                left = right
+                right += 1
                 count = 1
         if count > straight_length:
             straight_length = count
